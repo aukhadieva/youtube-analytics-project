@@ -10,6 +10,13 @@ class Channel:
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         self.__channel_id = channel_id
+        channel = self.get_service().channels().list(id=self.channel_id, part='snippet,statistics').execute()
+        self.title: str = channel['items'][0]['snippet']['title']
+        self.video_count: str = channel["items"][0]["statistics"]["videoCount"]
+        self.url: str = channel['items'][0]['snippet']['thumbnails']['default']['url']
+        self.description: str = channel['items'][0]['snippet']['description']
+        self.subscriber_count: str = channel["items"][0]["statistics"]['subscriberCount']
+        self.view_count: str = channel["items"][0]["statistics"]['viewCount']
 
     @property
     def channel_id(self):
@@ -28,42 +35,6 @@ class Channel:
         api_key: str = os.getenv('YT_API_KEY')
         youtube = build('youtube', 'v3', developerKey=api_key)
         return youtube
-
-    @property
-    def title(self):
-        channel = self.get_service().channels().list(id=self.channel_id, part='snippet,statistics').execute()
-        title: str = channel['items'][0]['snippet']['title']
-        return title
-
-    @property
-    def video_count(self):
-        channel = self.get_service().channels().list(id=self.channel_id, part='snippet,statistics').execute()
-        video_count: str = channel["items"][0]["statistics"]["videoCount"]
-        return video_count
-
-    @property
-    def url(self):
-        channel = self.get_service().channels().list(id=self.channel_id, part='snippet,statistics').execute()
-        url: str = channel['items'][0]['snippet']['thumbnails']['default']['url']
-        return url
-
-    @property
-    def description(self):
-        channel = self.get_service().channels().list(id=self.channel_id, part='snippet,statistics').execute()
-        description: str = channel['items'][0]['snippet']['description']
-        return description
-
-    @property
-    def subscriber_count(self):
-        channel = self.get_service().channels().list(id=self.channel_id, part='snippet,statistics').execute()
-        subscriber_count: str = channel["items"][0]["statistics"]['subscriberCount']
-        return subscriber_count
-
-    @property
-    def view_count(self):
-        channel = self.get_service().channels().list(id=self.channel_id, part='snippet,statistics').execute()
-        view_count: str = channel["items"][0]["statistics"]['viewCount']
-        return view_count
 
     def to_json(self, json_file):
         """Сохраняет в файл значения атрибутов экземпляра `Channel`."""
