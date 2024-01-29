@@ -13,10 +13,37 @@ class Channel:
         channel = self.get_service().channels().list(id=self.channel_id, part='snippet,statistics').execute()
         self.title: str = channel['items'][0]['snippet']['title']
         self.video_count: str = channel["items"][0]["statistics"]["videoCount"]
-        self.url: str = channel['items'][0]['snippet']['thumbnails']['default']['url']
+        self.url: str = f'https://www.youtube.com/channel/{self.__channel_id}'
         self.description: str = channel['items'][0]['snippet']['description']
         self.subscriber_count: str = channel["items"][0]["statistics"]['subscriberCount']
         self.view_count: str = channel["items"][0]["statistics"]['viewCount']
+
+    def __repr__(self):
+        return f'{self.title} ({self.url})'
+
+    def __add__(self, other):
+        return int(self.subscriber_count) + int(other.subscriber_count)
+
+    def __sub__(self, other):
+        return int(other.subscriber_count) - int(self.subscriber_count)
+
+    def __sub___(self, other):
+        return int(self.subscriber_count) - int(other.subscriber_count)
+
+    def __gt__(self, other):
+        return int(self.subscriber_count) > int(other.subscriber_count)
+
+    def __ge__(self, other):
+        return int(self.subscriber_count) >= int(other.subscriber_count)
+
+    def __lt__(self, other):
+        return int(self.subscriber_count) < int(other.subscriber_count)
+
+    def __le__(self, other):
+        return int(self.subscriber_count) <= int(other.subscriber_count)
+
+    def __eq__(self, other):
+        return int(self.subscriber_count) == int(other.subscriber_count)
 
     @property
     def channel_id(self):
@@ -24,9 +51,7 @@ class Channel:
 
     def print_info(self) -> None:
         """Выводит в консоль информацию о канале."""
-        api_key: str = os.getenv('YT_API_KEY')
-        youtube = build('youtube', 'v3', developerKey=api_key)
-        channel = youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
+        channel = self.get_service().channels().list(id=self.channel_id, part='snippet,statistics').execute()
         print(json.dumps(channel, indent=2, ensure_ascii=False))
 
     @classmethod
