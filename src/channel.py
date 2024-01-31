@@ -2,7 +2,10 @@ import json
 import os
 
 from googleapiclient.discovery import build
+from dotenv import load_dotenv
 
+load_dotenv()
+#os.getenv('YT_API_KEY')
 
 class Channel:
     """Класс для ютуб-канала"""
@@ -19,6 +22,10 @@ class Channel:
         self.view_count: str = channel["items"][0]["statistics"]['viewCount']
 
     def __repr__(self):
+        return (f'{self.__class__.__name__}({self.__channel_id}, {self.title}, {self.video_count}, {self.url},'
+                f'{self.description}, {self.subscriber_count}, {self.view_count})')
+
+    def __str__(self):
         return f'{self.title} ({self.url})'
 
     def __add__(self, other):
